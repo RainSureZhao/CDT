@@ -1,0 +1,6 @@
+# Jetbrains IDE files
+.idea
+
+# build
+cmake-build-debug
+cmake-build-debug-visual-studio
