@@ -10,8 +10,20 @@ find_package(CGAL CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(CDT main.cpp)
+# GEOMETRY
+file(GLOB GEOMETRY "${PROJECT_SOURCE_DIR}/include/geometry/*.h" "${PROJECT_SOURCE_DIR}/src/geometry/*.cpp")
+#NUMERIC
+file(GLOB NUMERIC "${PROJECT_SOURCE_DIR}/include/numeric/*.h" "${PROJECT_SOURCE_DIR}/src/numeric/*.cpp")
+#DELAUNAY
+file(GLOB DELAUNAY "${PROJECT_SOURCE_DIR}/include/dt/*.h" "${PROJECT_SOURCE_DIR}/src/dt/*.cpp")
 
+add_executable(CDT main.cpp
+                ${GEOMETRY}
+                ${NUMERIC}
+                ${DELAUNAY}
+                )
+
+target_include_directories(CDT PUBLIC "${PROJECT_SOURCE_DIR}/include")
 if(CGAL_Qt5_FOUND)
     target_link_libraries(CDT PUBLIC CGAL::CGAL_Basic_viewer)
 else()

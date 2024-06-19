@@ -1,47 +1,51 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_hierarchy_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/draw_constrained_triangulation_2.h>
-
-#include <cassert>
 #include <iostream>
-
+#include <vector>
+#include "geometry/point.h"
+#include "geometry/edge.h"
+#include "dt/delaunay2d.h"
+#include <random>
+#include <chrono>
+#include <array>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/draw_surface_mesh.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
-typedef CGAL::Triangulation_vertex_base_2<K>             Vbb;
-typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<K>   Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>      TDS;
-typedef CGAL::Exact_predicates_tag                       Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS,Itag> CDT;
-typedef CGAL::Triangulation_hierarchy_2<CDT>             CDTH;
-typedef CGAL::Constrained_triangulation_plus_2<CDTH>     Triangulation;
-
-typedef Triangulation::Point                             Point;
-
-int
-main( )
+typedef K::Point_3                                          Point;
+typedef CGAL::Surface_mesh<Point>                           Mesh;                                       Point;
+int main()
 {
-    Triangulation cdt;
-    std::cout << "Inserting a grid 5 x 5 of  constraints " << std::endl;
-    for (int i = 1; i < 6; ++i)
-        cdt.insert_constraint( Point(0,i), Point(6,i));
-    for (int j = 1; j < 6; ++j)
-        cdt.insert_constraint( Point(j,0), Point(j,6));
+    int n;
+    std::cin >> n;
+    std::default_random_engine eng(std::random_device{}());
+    std::uniform_real_distribution<double> dist_w(0, 800);
+    std::uniform_real_distribution<double> dist_h(0, 600);
+    std::cout << "Generating " << n << " random points" << std::endl;
 
-    int count = 0;
-    for (Triangulation::Subconstraint_iterator scit = cdt.subconstraints_begin();
-         scit != cdt.subconstraints_end();
-         ++scit)  ++count;
-    std::cout << "The number of resulting constrained edges is  ";
-    std::cout <<  count << std::endl;
+    std::vector<cdt::Point2d<double>> points;
+    for(int i = 0; i < n; i ++) {
+        points.emplace_back(dist_w(eng), dist_h(eng));
+    }
+    cdt::Delaunay2d<double> triangulation;
+    const auto start = std::chrono::high_resolution_clock::now();
+    const std::vector<cdt::Triangle2d<double>> triangles = triangulation.triangulate(points);
+    const auto end = std::chrono::high_resolution_clock::now();
+    const std::chrono::duration<double> diff = end - start;
 
-    //verbose mode of is_valid ; shows the number of vertices at each  level
-    std::cout << "The number of vertices at successive levels" << std::endl;
-    assert(cdt.is_valid(true));
+    std::cout << triangles.size() << " triangles generated in " << diff.count()
+              << "s\n";
 
-    CGAL::draw(cdt);
-
+    Mesh mesh;
+    std::vector<std::array<Mesh::Vertex_index, 3>> triangles_indexs;
+    for(std::size_t i = 0; i < triangles.size(); i ++) {
+        auto a = triangles[i].a, b = triangles[i].b, c = triangles[i].c;
+        auto id1 = mesh.add_vertex(Point(a.x, a.y, 0));
+        auto id2 = mesh.add_vertex(Point(b.x, b.y, 0));
+        auto id3 = mesh.add_vertex(Point(c.x, c.y, 0));
+        triangles_indexs.push_back({id1, id2, id3});
+    }
+    for(const auto& tri : triangles_indexs) {
+        mesh.add_face(tri[0], tri[1], tri[2]);
+    }
+    CGAL::draw(mesh);
     return 0;
 }
