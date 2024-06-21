@@ -27,7 +27,7 @@ namespace cdt {
             return os << p.a << ", " << p.b;
         }
         friend bool almost_equal(Edge2d lhs, Edge2d rhs) {
-            return almost_equal(lhs.a, rhs.a) && almost_equal(lhs.b, rhs.b);
+            return almost_equal(lhs.a, rhs.a) && almost_equal(lhs.b, rhs.b) || almost_equal(lhs.a, rhs.b) && almost_equal(lhs.b, rhs.a);
         }
     public:
         Point2d<T> a, b;

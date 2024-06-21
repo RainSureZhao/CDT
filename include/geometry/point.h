@@ -59,6 +59,9 @@ namespace cdt {
         friend Point2d operator*(T a, Point2d b) {
             return b *= a;
         }
+        friend bool operator<(Point2d a, Point2d b) {
+            return a.x < b.x || (a.x == b.x && a.y < b.y);
+        }
         friend bool operator==(Point2d a, Point2d b) {
             return a.x == b.x && a.y == b.y;
         }
@@ -127,6 +130,9 @@ namespace cdt {
         }
         friend Point3d operator*(T a, Point3d b) {
             return b *= a;
+        }
+        friend bool operator<(Point3d a, Point3d b) {
+            return a.x < b.x || (a.x == b.x && a.y < b.y) || (a.x == b.x && a.y == b.y && a.z < b.z);
         }
         friend bool operator==(Point3d a, Point3d b) {
             return a.x == b.x && a.y == b.y && a.z == b.z;

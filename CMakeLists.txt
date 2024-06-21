@@ -16,11 +16,13 @@ file(GLOB GEOMETRY "${PROJECT_SOURCE_DIR}/include/geometry/*.h" "${PROJECT_SOURC
 file(GLOB NUMERIC "${PROJECT_SOURCE_DIR}/include/numeric/*.h" "${PROJECT_SOURCE_DIR}/src/numeric/*.cpp")
 #DELAUNAY
 file(GLOB DELAUNAY "${PROJECT_SOURCE_DIR}/include/dt/*.h" "${PROJECT_SOURCE_DIR}/src/dt/*.cpp")
-
+#UTILS
+file(GLOB UTILS "${PROJECT_SOURCE_DIR}/include/utils/*.h" "${PROJECT_SOURCE_DIR}/src/utils/*.cpp")
 add_executable(CDT main.cpp
                 ${GEOMETRY}
                 ${NUMERIC}
                 ${DELAUNAY}
+                ${UTILS}
                 )
 
 target_include_directories(CDT PUBLIC "${PROJECT_SOURCE_DIR}/include")

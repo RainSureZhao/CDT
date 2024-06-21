@@ -108,8 +108,8 @@ namespace cdt {
         }
 
         // 删除一开始生成的三个顶点相关的三角形
-        _triangles.erase(std::remove_if(std::begin(_triangles), std::end(_triangles), [](auto& t) {
-            return t.isBad;
+        _triangles.erase(std::remove_if(std::begin(_triangles), std::end(_triangles), [p1, p2, p3](auto& t) {
+            return t.containsVertex(p1) || t.containsVertex(p2) || t.containsVertex(p3);
         }), std::end(_triangles));
 
         for(const auto& tri : _triangles) {
