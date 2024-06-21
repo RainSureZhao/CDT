@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(CDT)
+project(ConstraintDelaunayTriangulation)
 
 set(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTOUIC ON)
@@ -18,18 +18,21 @@ file(GLOB NUMERIC "${PROJECT_SOURCE_DIR}/include/numeric/*.h" "${PROJECT_SOURCE_
 file(GLOB DELAUNAY "${PROJECT_SOURCE_DIR}/include/dt/*.h" "${PROJECT_SOURCE_DIR}/src/dt/*.cpp")
 #UTILS
 file(GLOB UTILS "${PROJECT_SOURCE_DIR}/include/utils/*.h" "${PROJECT_SOURCE_DIR}/src/utils/*.cpp")
-add_executable(CDT main.cpp
+add_executable(${PROJECT_NAME} main.cpp
                 ${GEOMETRY}
                 ${NUMERIC}
                 ${DELAUNAY}
                 ${UTILS}
                 )
 
-target_include_directories(CDT PUBLIC "${PROJECT_SOURCE_DIR}/include")
+add_subdirectory(third_party/CDT CDT)
+target_link_libraries(${PROJECT_NAME} PRIVATE CDT::CDT)
+
+target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/include")
 if(CGAL_Qt5_FOUND)
-    target_link_libraries(CDT PUBLIC CGAL::CGAL_Basic_viewer)
+    target_link_libraries(${PROJECT_NAME} PUBLIC CGAL::CGAL_Basic_viewer)
 else()
     message(STATUS "NOTICE: Several examples require Qt5 and will not be compiled.")
 endif()
 
-target_link_libraries(CDT PRIVATE CGAL::CGAL)
+target_link_libraries(${PROJECT_NAME} PRIVATE CGAL::CGAL)

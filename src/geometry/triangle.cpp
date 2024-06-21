@@ -13,22 +13,24 @@ namespace cdt {
 
     template<typename T>
     bool Triangle2d<T>::circumCircleContains(const Point2d<T> &point) const {
-        // 计算出三个顶点到原点的距离的平方
-        auto oa = a.norm2();
-        auto ob = b.norm2();
-        auto oc = b.norm2();
+        auto ab = a.norm2();
+        auto cd = b.norm2();
+        auto ef = c.norm2();
 
-        auto ax = a.x, ay = a.y, bx = b.x, by = b.y, cx = c.x, cy = c.y;
+        auto ax = a.x;
+        auto ay = a.y;
+        auto bx = b.x;
+        auto by = b.y;
+        auto cx = c.x;
+        auto cy = c.y;
 
-        // 计算圆心坐标
-        auto circum_x = (oa * (cy - by) + ob * (ay - cy) + oc * (by - ay)) / (ax * (cy - by) + bx * (ay - cy) + cx * (by - ay));
-        auto circum_y = (oa * (cx - bx) + ob * (ax - cx) + oc * (bx - ax)) / (ay * (cx - bx) + by * (ax - cx) + cy * (bx - ax));
+        auto circum_x = (ab * (cy - by) + cd * (ay - cy) + ef * (by - ay)) / (ax * (cy - by) + bx * (ay - cy) + cx * (by - ay));
+        auto circum_y = (ab * (cx - bx) + cd * (ax - cx) + ef * (bx - ax)) / (ay * (cx - bx) + by * (ax - cx) + cy * (bx - ax));
 
-        Point2d<T> center{circum_x / 2, circum_y / 2};
-        auto radius = a.distance2(center);
-        auto dist = point.distance2(center);
-        // 零误差
-        return dist <= radius;
+        Point2d<T> circum(circum_x / 2, circum_y / 2);
+        const T circum_radius = a.distance2(circum);
+        auto dist = point.distance2(circum);
+        return dist <= circum_radius;
     }
 
     template<typename T>
