@@ -7,6 +7,7 @@
 
 #include "geometry/point.h"
 #include "numeric/numeric.h"
+#include "common.h"
 
 namespace cdt {
     template<typename T>
@@ -16,6 +17,7 @@ namespace cdt {
         Edge2d(const Edge2d&) = default;
         Edge2d(Edge2d&&) = default;
         Edge2d(const Point2d<T> &a, const Point2d<T> &b) : a(a), b(b) {}
+        Edge2d(const VertexIndex& v1, const VertexIndex& v2) : verts(std::make_pair(v1, v2)) {}
 
         Edge2d& operator=(const Edge2d&) = default;
 
@@ -31,6 +33,7 @@ namespace cdt {
         }
     public:
         Point2d<T> a, b;
+        std::pair<VertexIndex, VertexIndex> verts;
         bool isBad = false;
     };
 }

@@ -981,6 +981,7 @@ Triangulation<T, TNearPointLocator>::intersectedTriangle(
 template <typename T, typename TNearPointLocator>
 void Triangulation<T, TNearPointLocator>::addSuperTriangle(const Box2d<T>& box)
 {
+    // RainSure111
     m_nTargetVerts = 3;
     m_superGeomType = SuperGeometryType::SuperTriangle;
 
@@ -1720,7 +1721,7 @@ template <typename T, typename TNearPointLocator>
 void Triangulation<T, TNearPointLocator>::insertVertices(
     const std::vector<V2d<T> >& newVertices)
 {
-    return insertVertices(
+    insertVertices(
         newVertices.begin(), newVertices.end(), getX_V2d<T>, getY_V2d<T>);
 }
 
@@ -1947,7 +1948,7 @@ void Triangulation<T, TNearPointLocator>::insertVertices_KDTreeBFS(
     VertInd superGeomVertCount,
     V2d<T> boxMin,
     V2d<T> boxMax)
-{
+{///RainSure111
     // calculate original indices
     const VertInd vertexCount =
         static_cast<IndexSizeType>(vertices.size()) - superGeomVertCount;
@@ -2077,7 +2078,7 @@ void Triangulation<T, TNearPointLocator>::tryAddVertexToLocator(const VertInd v)
 
 template <typename T, typename TNearPointLocator>
 void Triangulation<T, TNearPointLocator>::tryInitNearestPointLocator()
-{
+{///RainSure111
     if(!vertices.empty() && m_nearPtLocator.empty())
     {
         m_nearPtLocator.initialize(vertices);

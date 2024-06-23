@@ -846,6 +846,7 @@ void Triangulation<T, TNearPointLocator>::insertVertices(
     TGetVertexCoordX getX,
     TGetVertexCoordY getY)
 {
+    // RainSure111
     if(isFinalized())
         throw FinalizedError(CDT_SOURCE_LOCATION);
 

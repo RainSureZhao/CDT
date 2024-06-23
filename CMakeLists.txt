@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME} main.cpp
                 ${NUMERIC}
                 ${DELAUNAY}
                 ${UTILS}
+                include/common.h
                 )
 
 add_subdirectory(third_party/CDT CDT)
