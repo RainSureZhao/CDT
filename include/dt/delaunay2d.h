@@ -88,6 +88,8 @@ namespace cdt {
 
         void finalizeTriangulation(const std::unordered_set<TriangleIndex>& removedTriangles);
 
+        bool checkResult() const;
+
         const std::vector<Triangle2d<T>>& triangulate(std::vector<Point2d<T>>& points);
         const std::vector<Triangle2d<T>>& getTriangles() const;
         const std::vector<Edge2d<T>>& getEdges() const;

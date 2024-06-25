@@ -124,7 +124,8 @@ namespace cdt {
         // if d lies inside the oriented circle abc return a positive value
         T det = CalculateDET(bx, by, bx * bx + by * by, cx, cy, cx * cx + cy * cy, dx, dy, dx * dx + dy * dy)
                 - CalculateDET(ax, ay, ax * ax + ay * ay, cx, cy, cx * cx + cy * cy, dx, dy, dx * dx + dy * dy)
-                + CalculateDET(ax, ay, ax * ax + ay * ay, bx, by, bx * bx + by * by, dx, dy, dx * dx + dy * dy);
+                + CalculateDET(ax, ay, ax * ax + ay * ay, bx, by, bx * bx + by * by, dx, dy, dx * dx + dy * dy)
+                - CalculateDET(ax, ay, ax * ax + ay * ay, bx, by, bx * bx + by * by, cx, cy, cx * cx + cy * cy);
         return det > 0;
     }
 

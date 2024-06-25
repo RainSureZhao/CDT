@@ -166,6 +166,7 @@ namespace cdt {
         return nxtDummy;
     }
 
+    // find point in which triangle
     template<typename T>
     TriangleIndex Delaunay2d<T>::walkTriangles(VertexIndex startVertex, const Point2d<T> &point) const {
         // begin walk in search of triangle at pos
@@ -175,7 +176,7 @@ namespace cdt {
         while(!found) {
             auto& t = _triangles[currentTriangle];
             found = true;
-            // // stochastic offset to randomize which edge we check first
+            // stochastic offset to randomize which edge we check first
             int offset(prng() % 3);
             for(auto i = 0; i < 3; i ++) {
                 auto j = (i + offset) % 3;
@@ -350,15 +351,30 @@ namespace cdt {
             edgeFlipInfo(iT, iV, iTopo, iV2, iV3, iV4, n1, n2, n3, n4);
             if(iTopo != noNeighbor && isFlipNeeded(iV, iV2, iV3, iV4)) {
                 flipEdge(iT, iTopo, iV, iV2, iV3, iV4, n1, n2, n3, n4);
+                triangleStack.push(iT);
+                triangleStack.push(iTopo);
             }
         }
     }
 
+    /*
+     *                       v4         original edge: (v2, v4)
+     *                      /|\   flip-candidate edge: (v1,  v3)
+     *                    /  |  \
+     *              n3  /    |    \  n4
+     *                /      |      \
+     * new vertex--> v1    T | Topo  v3
+     *                \      |      /
+     *              n1  \    |    /  n2
+     *                    \  |  /
+     *                      \|/
+     *                       v2
+     */
     template<typename T>
     void Delaunay2d<T>::flipEdge(cdt::TriangleIndex iT, cdt::TriangleIndex iTopo) {
         Triangle2d<T>& t = _triangles[iT];
         Triangle2d<T>& tOpo = _triangles[iTopo];
-        std::array<TriangleIndex , 3>& triNs = t.neighbors;
+        std::array<TriangleIndex, 3>& triNs = t.neighbors;
         std::array<TriangleIndex, 3>& triOpoNs = tOpo.neighbors;
         std::array<VertexIndex, 3>& triVs = t.vertices;
         std::array<VertexIndex, 3>& triOpoVs = tOpo.vertices;
@@ -389,6 +405,19 @@ namespace cdt {
         }
     }
 
+    /*
+     *                       v4         original edge: (v1, v3)
+     *                      /|\   flip-candidate edge: (v,  v2)
+     *                    /  |  \
+     *              n3  /    |    \  n4
+     *                /      |      \
+     * new vertex--> v1    T | Topo  v3
+     *                \      |      /
+     *              n1  \    |    /  n2
+     *                    \  |  /
+     *                      \|/
+     *                       v2
+     */
     template<typename T>
     void Delaunay2d<T>::flipEdge(cdt::TriangleIndex iT, cdt::TriangleIndex iTopo, cdt::VertexIndex v1,
                                  cdt::VertexIndex v2, cdt::VertexIndex v3, cdt::VertexIndex v4, cdt::TriangleIndex n1,
@@ -436,9 +465,9 @@ namespace cdt {
     bool Delaunay2d<T>::isFlipNeeded(cdt::VertexIndex iV1, cdt::VertexIndex iV2, cdt::VertexIndex iV3,
                                      cdt::VertexIndex iV4) const {
         auto& v1 = _vertices[iV1];
-        auto &v2 = _vertices[iV2];
-        auto &v3 = _vertices[iV3];
-        auto &v4 = _vertices[iV4];
+        auto& v2 = _vertices[iV2];
+        auto& v3 = _vertices[iV3];
+        auto& v4 = _vertices[iV4];
         // If flip-candidate edge touches super-triangle in-circumference
         // test has to be replaced with orient2d test against the line
         // formed by two non-artificial vertices (that don't belong to
@@ -679,6 +708,22 @@ namespace cdt {
             }
         }
         finalizeTriangulation(toErase);
+    }
+
+    template<typename T>
+    bool Delaunay2d<T>::checkResult() const {
+        // 判断每个三角形的外接圆是否还含有其它点
+        for(auto& tri : _triangles) {
+            for(std::size_t i = 0; i < _vertices.size(); i ++) {
+                if(i == tri.vertices[0] || i == tri.vertices[1] || i == tri.vertices[2]) {
+                    continue;
+                }
+                if(IsInCircumcircle(_vertices[i], _vertices[tri.vertices[0]], _vertices[tri.vertices[1]], _vertices[tri.vertices[2]]))  {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     template class Delaunay2d<float>;

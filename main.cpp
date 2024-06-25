@@ -10,13 +10,15 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_surface_mesh.h>
 #include "utils/draw.h"
-#include "CDT.h"
+// #include "CDT.h"
+// #include "utils/cdtUtils.h"
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3                                          Point;
 typedef CGAL::Surface_mesh<Point>                           Mesh;                                       Point;
 int main()
 {
-    CDT::Triangulation<double> cdt_generator;
+    // CDT::Triangulation<double> cdt_generator;
 
     int n;
     std::cin >> n;
@@ -26,8 +28,11 @@ int main()
     std::cout << "Generating " << n << " random points" << std::endl;
 ////
     std::vector<cdt::Point2d<double>> points;
-    std::vector<CDT::V2d<double>> ps;
+    // std::vector<CDT::V2d<double>> ps;
+//    cdt::Point2d<double> p{0, 0}, v1{-1, 0}, v2{0, 0}, v3{1, 0};
+//    std::cout << cdt::IsInCircumcircle(p, v1, v2, v3) << std::endl;
     for(int i = 0; i < n; i ++) {
+        // std::cin >> points[i];
         points.emplace_back(dist_w(eng), dist_h(eng));
         // ps.emplace_back(dist_w(eng), dist_h(eng));
     }
@@ -35,7 +40,9 @@ int main()
     const auto start = std::chrono::high_resolution_clock::now();
     triangulation.insertVertices(points);
     triangulation.eraseSuperTriangle();
+    std::cout << triangulation.checkResult() << std::endl;
     auto triangles = triangulation.getTriangles();
+    // const std::vector<cdt::Triangle2d<double>> triangles = triangulation.triangulate(points);
     const auto end = std::chrono::high_resolution_clock::now();
     const std::chrono::duration<double> diff = end - start;
     std::cout << triangles.size() << " triangles generated in " << diff.count()
@@ -43,7 +50,7 @@ int main()
 //    for(auto &triangle : triangles) {
 //        std::cout << triangle << std::endl;
 //    }
-    auto mesh = cdt::drawMesh(triangles);
+     auto mesh = cdt::drawMesh(triangles);
 //    cdt_generator.insertVertices(ps);
 //    cdt_generator.eraseSuperTriangle();
 //    auto triangles = cdt_generator.triangles;
